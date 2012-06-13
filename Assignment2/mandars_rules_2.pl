@@ -227,7 +227,7 @@ check_rule_1_1 :-
 check_reachability(InitialState,TargetState):-
 	(req(ReqId,InitialState,_,_,X)->
 	(X \= TargetState -> 
-	check_reachability(X,TargetState); print('state: '), print(TargetState), print(' is reachable.'),nl,false);
+	check_reachability(X,TargetState); false);
 	print('state: '), print(TargetState), print(' is not reachable '),nl,!).
 
 /*
@@ -251,8 +251,7 @@ check_rule_1_2 :-
 */
 rule_1_3_iterate_reqs(HazardState,InitialState) :-
 	(req(_,InitialState,_,_,X) -> 
-	(not(safe(X)) -> rule_1_3_iterate_reqs(HazardState,X); print('state: '), print(HazardState),
-	 print(' is leading to a safe state'),nl,false);
+	(not(safe(X)) -> rule_1_3_iterate_reqs(HazardState,X);false);
 	 print('state: '), print(HazardState), print(' is not leading to a safe state.'),nl,!).
 
 /*
@@ -267,11 +266,15 @@ rule_1_3_iterate_hazard_states :-
 check_rule_1_3 :-
 	not(rule_1_3_iterate_hazard_states).
 
-rule_1_4_iterate_reqs(RecurrentState,InitialState) :-
+rule_1_4_iterate(RecurrentState,InitialState):-
 	(req(_,InitialState,_,_,X) ->
-	(RecurrentState \= X -> rule_1_4_iterate_reqs(RecurrentState,X); print('state: '), print(RecurrentState),
-	 print(' is a valid recurrent state'),nl,false);
-	 print('state: '), print(RecurrentState),print(' is not a valid recurrent state.'),nl,!).
+	(RecurrentState \= X -> rule_1_4_iterate(RecurrentState,X); false);
+	print('state: '), print(RecurrentState), print(' is not a valid recurrent state.'),nl,!),
+	false.
+
+rule_1_4_iterate_reqs(RecurrentState,InitialState) :-
+	req(_,InitialState,_,_,X),
+	rule_1_4_iterate(RecurrentState,X).
 
 check_rule_1_4 :-
 	print('checking rule 1.4 ...'), nl,
