@@ -172,14 +172,14 @@ iterate_reqs :-
 	This rule checks for general rule 5: All defined requirement identifiers must be unique
 */
 check_general_rule_5 :-
-	print('NOT WORKING! checking general rule 5 ...'), nl,
+	print('checking general rule 5 ...'), nl,
 	not(iterate_reqs).
 
 /*
 	This rule checks for general rule 6: all requirement identifiers must be unique
 */
 check_general_rule_6 :-
-	print('NOT IMPLEMENTED! checking general rule 6 ...'), nl.
+	print('(Duplicate) checking general rule 6 ...'), nl.
 
 /*
 	This rule checks for all the valid parameters other than Requirement ID
