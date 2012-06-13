@@ -284,7 +284,7 @@ check_rule_1_4 :-
 /*
 	These are the test cases to be ran one at a time.
 */
-test:-
+list_violations:-
 	check_general_rule_1,
 	check_general_rule_2,
 	check_general_rule_3,
