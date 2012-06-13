@@ -173,7 +173,7 @@ iterate_reqs :-
 */
 check_general_rule_5 :-
 	print('NOT WORKING! checking general rule 5 ...'), nl,
-	iterate_reqs.
+	not(iterate_reqs).
 
 /*
 	This rule checks for general rule 6: all requirement identifiers must be unique
@@ -219,16 +219,16 @@ rule_1_1_iterate_reqs :-
 */
 check_rule_1_1 :-
 	print('checking rule 1.1 ...'),nl,
-	not(rule_1_1_iterate_reqs).
+	rule_1_1_iterate_reqs.
 
 /*
 	This rule checks for reachability of target state from specified initial state
 */
 check_reachability(InitialState,TargetState):-
-	(req(_,InitialState,_,_,X)->
+	(req(ReqId,InitialState,_,_,X)->
 	(X \= TargetState -> 
 	check_reachability(X,TargetState); print('state: '), print(TargetState), print(' is reachable.'),nl,false);
-	print('state: '), print(TargetState), print(' is not reachable'),nl,!).
+	print('state: '), print(TargetState), print(' is not reachable '),nl,!).
 
 /*
 	This rule iterates through requirements for rule 1.2
@@ -244,7 +244,7 @@ rule_1_2_iterate_reqs(InitialState) :-
 check_rule_1_2 :-
 	print('checking rule 1.2 ...'), nl,
 	initial(InitialState),
-	rule_1_2_iterate_reqs(InitialState).
+	not(rule_1_2_iterate_reqs(InitialState)).
 
 /*
 	This rule iterates through requirements for rule 1.3
@@ -258,26 +258,40 @@ rule_1_3_iterate_reqs(HazardState,InitialState) :-
 /*
 	This rule checks for special rule 1.3
 */
-check_rule_1_3 :-
+rule_1_3_iterate_hazard_states :-
 	print('checking rule 1.3 ...'), nl,
 	hazard(HazardState),
-	not(rule_1_3_iterate_reqs(HazardState)),
+	rule_1_3_iterate_reqs(HazardState,HazardState),
 	false.
 
+check_rule_1_3 :-
+	not(rule_1_3_iterate_hazard_states).
+
+rule_1_4_iterate_reqs(RecurrentState,InitialState) :-
+	(req(_,InitialState,_,_,X) ->
+	(RecurrentState \= X -> rule_1_4_iterate_reqs(RecurrentState,X); print('state: '), print(RecurrentState),
+	 print(' is a valid recurrent state'),nl,false);
+	 print('state: '), print(RecurrentState),print(' is not a valid recurrent state.'),nl,!).
+
+check_rule_1_4 :-
+	print('checking rule 1.4 ...'), nl,
+	recurrent(RecurrentState),
+	rule_1_4_iterate_reqs(RecurrentState,RecurrentState),
+	false.
 /*
 	These are the test cases to be ran one at a time.
 */
 test:-
-%	check_general_rule_1,
-%	check_general_rule_2,
-%	check_general_rule_3,
-%	check_general_rule_4,
+	check_general_rule_1,
+	check_general_rule_2,
+	check_general_rule_3,
+	check_general_rule_4,
 	check_general_rule_5,
-%	check_general_rule_6,
-%	check_general_rule_7,
-%	check_rule_1_1,
-%	check_rule_1_2,
-%	check_rule_1_3,
-%	check_rule_1_4,
+	check_general_rule_6,
+	check_general_rule_7,
+	check_rule_1_1,
+	check_rule_1_2,
+	check_rule_1_3,
+	check_rule_1_4,
 %	testing,
 	nl.
